@@ -1,5 +1,6 @@
 name: main-workflow
-env: {}
+env: 
+  IMAGE_REPOSITORY: sruti15590/images
 
 on:
   push:
@@ -25,3 +26,18 @@ jobs:
 
       - name: Run unit tests
         run: go test -v ./...
+
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Build and push a container image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ env.IMAGE_REPOSITORY }}
+          tag_with_ref: true
+          tag_with_sha: true
